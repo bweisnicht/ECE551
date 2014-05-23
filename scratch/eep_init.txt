@@ -1,0 +1,4 @@
+@0 000   // Sin Offset
+@1 7ff   // Sin Scaling term
+@2 000   // Cos Offset
+@3 7ff   // Cos Scaling term 

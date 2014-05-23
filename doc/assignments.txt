@@ -1,0 +1,38 @@
+Overall plan:
+Start out with modular testing.
+Each function is tested on its own using the scripts in the scripts/ directory.
+See below for details.
+
+In the main test bench we will combine everything
+and test against all values (see A2D_vals.txt).
+Command mode will also be tested.
+
+Main tasks: 
+	1) Command mode
+	2) Normal mode
+
+Main state machine: Adam
+	planned tests:
+	- Check outputs for all states and conditions
+	- Check proper control flow for both normal and command mode
+
+Synthesis: Adam
+
+CORDIC: Matt
+	planned tests:
+	- Test CORDIC against all possible values.
+
+Repo management: Matt
+
+Command Module: Ben
+	planned tests:
+	- Test the functionality of datapath
+	- Force the sm into mult state/ cordic state
+
+Datapath: Ben
+	planned tests:
+	- Math ops (CORDIC, Booth Multiply, etc.) should sufficiently test the datapath
+
+Booth multiply: Lars
+	planned tests: 
+	- Test every possible value.

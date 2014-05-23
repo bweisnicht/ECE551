@@ -1,0 +1,77 @@
+# Design Vision synthesis script
+# Borrowed heavily from lecture slides
+reset_design
+read_file -format verilog ../verilog/dflop.v
+read_file -format verilog ../verilog/matt_A2D_digital.v
+#read_file -format verilog ../verilog/lars_A2D_digital.v
+#read_file -format verilog ../verilog/ben_A2D_digital.v
+#read_file -format verilog ../verilog/adam_A2D_digital.v
+set_design_top A2D_digital
+#set_design_top lars_A2D_digital
+#set_design_top ben_A2D_digital
+#set_design_top adam_A2D_digital
+
+
+###########################
+# Define clock and set don't mess with it #
+##########################
+create_clock -name "clk" -period 2 -waveform { 1 2 } { clk }
+set_dont_touch_network [find port clk]
+
+# setup pointer that contains all inputs except clock #
+set prim_inputs [remove_from_collection [all_inputs] [find port clk]]
+
+#########################
+# Set input delay & drive on all inputs #
+########################
+set_input_delay -clock clk 1 [copy_collection $prim_inputs]
+set_driving_cell -lib_cell AO33D0BWP -pin Z -from_pin A1 -library tcbn40lpbwptc [copy_collection $prim_inputs]
+
+##########################
+# Set output delay & load on all outputs #
+##########################
+
+set_output_delay -clock clk 1 [all_outputs]
+#set_output_delay -clock clk .2 [dst]
+set_load 0.10 [all_outputs]
+
+#####################################
+# Wire load model allows it to estimate internal parasitics #
+####################################
+set_wire_load_model -name TSMC32K_Lowk_Conservative -library tcbn40lpbwptc
+
+
+####################################
+# Set clock uncertainty and fix hold times
+#####################################
+set_clock_uncertainty .1 clk
+set_fix_hold clk
+
+
+##################################
+# Max transition time is important for Hot-E reasons #
+#################################
+set_max_transition 0.10 [current_design]
+
+
+## Compile and print reports
+ungroup -all -flatten
+compile -map_effort high -area_effort high
+check_design
+report_area >> matt_a2d_area.txt
+#report_area >> lars_a2d_area.txt
+#report_area >> ben_a2d_area.txt
+#report_area >> adam_a2d_area.txt
+
+########################
+# Take a look at max & min timings #
+#######################
+#report_timing -path full -delay max -nworst 3
+#report_timing -path full -delay min -nworst 3
+
+#### write out final netlist ######
+write_file -format verilog -output ../synth/matt_A2D_digital.vg A2D_digital
+#write_file -format verilog -output ../synth/lars_A2D_digital.vg A2D_digital
+#write_file -format verilog -output ../synth/ben_A2D_digital.vg A2D_digital
+#write_file -format verilog -output ../synth/adam_A2D_digital.vg A2D_digital
+

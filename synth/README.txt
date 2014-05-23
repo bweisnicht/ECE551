@@ -1,0 +1,1 @@
+- All synthesized (.vg) files go in this directory but should not be added to git (since the scripts generate them)
